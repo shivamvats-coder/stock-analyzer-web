@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Analyzer Web</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📈 Stock Analyzer</h1>
+
+        <input id="ticker" placeholder="Enter company (e.g., TCS)" />
+
+        <button onclick="searchCompany()">Search</button>
+
+        <div id="analytics"></div>
+
+        <h2>Candlestick Chart</h2>
+        <div id="chart"></div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
