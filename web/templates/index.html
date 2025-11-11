@@ -1,25 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Stock Analyzer Web</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <meta charset="utf-8" />
+  <title>Stock Analyzer</title>
+
+  <!-- ✅ Mobile: allow pinch-zoom -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="/static/style.css" />
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
+  <header class="topbar">
+    <div class="brand">📈 Stock Analyzer</div>
+    <button id="themeToggle" class="ghost">🌙</button>
+  </header>
 
-    <div class="container">
-        <h1>📈 Stock Analyzer</h1>
+  <main class="container">
+    <section class="card">
+      <h1>Search Company</h1>
+      <div class="row">
+        <input id="ticker" placeholder="e.g. TCS / INFY / RELIANCE" />
+        <button id="goBtn" class="primary">Search</button>
+      </div>
 
-        <input id="ticker" placeholder="Enter company (e.g., TCS)" />
+      <div class="row dates">
+        <input id="startDate" type="date" />
+        <span class="dash">to</span>
+        <input id="endDate" type="date" />
+        <button id="clearDates" class="ghost small">Clear</button>
+      </div>
+      <p class="hint">Tip: Dates optional. Leave blank to show all data.</p>
+    </section>
 
-        <button onclick="searchCompany()">Search</button>
+    <section id="stats" class="grid">
+      <div class="stat">
+        <div class="label">Average Volume</div>
+        <div id="avgVol" class="value">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Highest</div>
+        <div id="high" class="value">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Lowest</div>
+        <div id="low" class="value">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">First Open</div>
+        <div id="firstOpen" class="value">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Last Close</div>
+        <div id="lastClose" class="value">—</div>
+      </div>
+    </section>
 
-        <div id="analytics"></div>
+    <section class="card">
+      <div class="row space-between">
+        <h2 id="chartTitle">Candlestick</h2>
+        <div class="row gap">
+          <button id="downloadPng" class="ghost small">Download PNG</button>
+          <button id="resetZoom" class="ghost small">Reset Zoom</button>
+        </div>
+      </div>
+      <div id="chart" class="chart"></div>
+    </section>
+  </main>
 
-        <h2>Candlestick Chart</h2>
-        <div id="chart"></div>
-    </div>
+  <div id="toast" class="toast" hidden>Message</div>
 
-    <script src="/static/app.js"></script>
+  <script src="/static/app.js"></script>
 </body>
 </html>
