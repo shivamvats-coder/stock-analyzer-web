@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Stock Analyzer</title>
+  <title>Stock Analyzer — Compare & Export</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="/static/style.css" />
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -12,68 +11,71 @@
 <body>
   <header class="topbar">
     <div class="brand">📈 Stock Analyzer</div>
-    <button id="themeToggle" class="ghost">🌙</button>
+    <div class="actions">
+      <button id="themeToggle" class="ghost">🌙</button>
+    </div>
   </header>
 
   <main class="container">
+    <!-- Controls -->
     <section class="card">
-      <h1>Search Company</h1>
-
+      <h1>Compare Companies</h1>
       <div class="row">
-        <input id="ticker" placeholder="e.g. TCS / TCS.NS / INFY.NS / RELIANCE.NS" />
-        <button id="goBtn" class="primary">Search</button>
-      </div>
-
-      <div class="row">
-        <select id="source" title="Data Source">
-          <option value="sample">Sample CSV</option>
+        <select id="source">
           <option value="live" selected>Live (Yahoo Finance)</option>
+          <option value="sample">Sample CSV</option>
         </select>
 
-        <select id="period" title="Period">
-          <option>1mo</option><option>3mo</option><option selected>6mo</option>
-          <option>1y</option><option>2y</option><option>5y</option><option>max</option>
+        <select id="ticker1"></select>
+        <select id="ticker2"></select>
+
+        <select id="mode">
+          <option value="overlay">Overlay (close-price)</option>
+          <option value="stacked">Stacked (candlesticks)</option>
         </select>
 
-        <select id="interval" title="Interval">
-          <option>1d</option><option>1wk</option><option>1mo</option>
+        <button id="compareBtn" class="primary">Compare</button>
+      </div>
+
+      <div class="row small-gap">
+        <select id="period">
+          <option>1mo</option><option>3mo</option><option selected>6mo</option><option>1y</option><option>2y</option><option>5y</option><option>max</option>
         </select>
-      </div>
+        <select id="interval"><option>1d</option><option>1wk</option><option>1mo</option></select>
 
-      <div class="row gap">
-        <button class="ghost small quick" data-p="1mo">1M</button>
-        <button class="ghost small quick" data-p="3mo">3M</button>
-        <button class="ghost small quick" data-p="6mo">6M</button>
-        <button class="ghost small quick" data-p="1y">1Y</button>
-        <button class="ghost small quick" data-p="max">MAX</button>
-      </div>
+        <input id="uploadFile" type="file" accept=".csv" />
+        <button id="uploadBtn" class="ghost small">Upload CSV</button>
 
-      <div class="row dates">
-        <input id="startDate" type="date" />
-        <span class="dash">to</span>
-        <input id="endDate" type="date" />
-        <button id="clearDates" class="ghost small">Clear</button>
+        <button id="downloadCsv" class="ghost small">Download CSV</button>
+        <button id="downloadPng" class="ghost small">Download PNG</button>
       </div>
-      <p class="hint">Indian stocks ke liye Yahoo par usually <b>.NS</b> suffix lagta hai (e.g., <b>TCS.NS</b>).</p>
+      <p class="hint">Choose source, select companies from the dropdown. For India tickers use suffix <b>.NS</b> (e.g., RELIANCE.NS).</p>
     </section>
 
+    <!-- Stats -->
     <section id="stats" class="grid">
-      <div class="stat"><div class="label">Average Volume</div><div id="avgVol" class="value">—</div></div>
-      <div class="stat"><div class="label">Highest</div><div id="high" class="value">—</div></div>
-      <div class="stat"><div class="label">Lowest</div><div id="low" class="value">—</div></div>
-      <div class="stat"><div class="label">First Open</div><div id="firstOpen" class="value">—</div></div>
-      <div class="stat"><div class="label">Last Close</div><div id="lastClose" class="value">—</div></div>
+      <div class="stat"><div class="label">Ticker A</div><div id="tA" class="value">—</div></div>
+      <div class="stat"><div class="label">Ticker B</div><div id="tB" class="value">—</div></div>
+      <div class="stat"><div class="label">A % Change</div><div id="pA" class="value">—</div></div>
+      <div class="stat"><div class="label">B % Change</div><div id="pB" class="value">—</div></div>
+      <div class="stat"><div class="label">Common Range</div><div id="range" class="value">—</div></div>
     </section>
 
+    <!-- Chart -->
     <section class="card">
       <div class="row space-between">
-        <h2 id="chartTitle">Candlestick</h2>
+        <h2 id="chartTitle">Comparison Chart</h2>
         <div class="row gap">
-          <button id="downloadPng" class="ghost small">Download PNG</button>
           <button id="resetZoom" class="ghost small">Reset Zoom</button>
         </div>
       </div>
       <div id="chart" class="chart"></div>
+    </section>
+
+    <!-- Upload preview (if any) -->
+    <section id="uploadPreview" class="card" hidden>
+      <h3>Uploaded Data Preview</h3>
+      <div id="previewTable"></div>
     </section>
   </main>
 
