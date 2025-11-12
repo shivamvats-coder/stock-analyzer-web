@@ -2,85 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Stock Analyzer — Compare & Export</title>
+  <title>Stock Analyzer — Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="/static/style.css" />
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">📈 Stock Analyzer</div>
-    <div class="actions">
-      <button id="themeToggle" class="ghost">🌙</button>
-    </div>
-  </header>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">📈 Stock Analyzer</div>
+      <nav>
+        <button data-tab="home" class="nav-item active">Home</button>
+        <button data-tab="compare" class="nav-item">Compare</button>
+        <button data-tab="upload" class="nav-item">Upload CSV</button>
+        <button data-tab="export" class="nav-item">Export</button>
+      </nav>
+      <div class="side-footer">English UI • Demo</div>
+    </aside>
 
-  <main class="container">
-    <!-- Controls -->
-    <section class="card">
-      <h1>Compare Companies</h1>
-      <div class="row">
-        <select id="source">
-          <option value="live" selected>Live (Yahoo Finance)</option>
-          <option value="sample">Sample CSV</option>
-        </select>
+    <main class="main">
+      <!-- HOME -->
+      <section id="home" class="tab active">
+        <header class="topbar">
+          <div class="search-row">
+            <input id="homeSearch" placeholder="Search company (e.g., RELIANCE.NS)"/>
+            <button id="openCompare" class="primary">Open Compare</button>
+          </div>
+          <div class="top-actions">
+            <button id="reloadFeatured" class="ghost small">Reload</button>
+            <button id="themeToggle" class="ghost small">🌙</button>
+          </div>
+        </header>
 
-        <select id="ticker1"></select>
-        <select id="ticker2"></select>
+        <div class="container">
+          <h2>Featured Companies</h2>
+          <div id="featured" class="cards"></div>
 
-        <select id="mode">
-          <option value="overlay">Overlay (close-price)</option>
-          <option value="stacked">Stacked (candlesticks)</option>
-        </select>
-
-        <button id="compareBtn" class="primary">Compare</button>
-      </div>
-
-      <div class="row small-gap">
-        <select id="period">
-          <option>1mo</option><option>3mo</option><option selected>6mo</option><option>1y</option><option>2y</option><option>5y</option><option>max</option>
-        </select>
-        <select id="interval"><option>1d</option><option>1wk</option><option>1mo</option></select>
-
-        <input id="uploadFile" type="file" accept=".csv" />
-        <button id="uploadBtn" class="ghost small">Upload CSV</button>
-
-        <button id="downloadCsv" class="ghost small">Download CSV</button>
-        <button id="downloadPng" class="ghost small">Download PNG</button>
-      </div>
-      <p class="hint">Choose source, select companies from the dropdown. For India tickers use suffix <b>.NS</b> (e.g., RELIANCE.NS).</p>
-    </section>
-
-    <!-- Stats -->
-    <section id="stats" class="grid">
-      <div class="stat"><div class="label">Ticker A</div><div id="tA" class="value">—</div></div>
-      <div class="stat"><div class="label">Ticker B</div><div id="tB" class="value">—</div></div>
-      <div class="stat"><div class="label">A % Change</div><div id="pA" class="value">—</div></div>
-      <div class="stat"><div class="label">B % Change</div><div id="pB" class="value">—</div></div>
-      <div class="stat"><div class="label">Common Range</div><div id="range" class="value">—</div></div>
-    </section>
-
-    <!-- Chart -->
-    <section class="card">
-      <div class="row space-between">
-        <h2 id="chartTitle">Comparison Chart</h2>
-        <div class="row gap">
-          <button id="resetZoom" class="ghost small">Reset Zoom</button>
+          <h3 class="section-title">Market Snapshot</h3>
+          <div class="card">
+            <div id="marketChart" class="chart"></div>
+          </div>
         </div>
-      </div>
-      <div id="chart" class="chart"></div>
-    </section>
+      </section>
 
-    <!-- Upload preview (if any) -->
-    <section id="uploadPreview" class="card" hidden>
-      <h3>Uploaded Data Preview</h3>
-      <div id="previewTable"></div>
-    </section>
-  </main>
+      <!-- COMPARE -->
+      <section id="compare" class="tab">
+        <div class="container">
+          <h2>Compare Companies</h2>
+          <div class="card">
+            <div class="row">
+              <select id="sourceC"><option value="live" selected>Live (Yahoo)</option><option value="sample">Sample CSV</option></select>
+              <select id="t1"></select>
+              <select id="t2"></select>
+              <select id="modeC"><option value="overlay">Overlay</option><option value="stacked">Stacked</option></select>
+              <button id="doCompare" class="primary">Compare</button>
+            </div>
+
+            <div class="row small-gap" style="margin-top:12px;">
+              <select id="periodC"><option>1mo</option><option>3mo</option><option selected>6mo</option><option>1y</option><option>2y</option><option>5y</option><option>max</option></select>
+              <select id="intervalC"><option>1d</option><option>1wk</option><option>1mo</option></select>
+              <button id="resetZoomC" class="ghost small">Reset Zoom</button>
+            </div>
+          </div>
+
+          <div id="compareStats" class="grid" style="margin-top:12px">
+            <div class="stat"><div class="label">Ticker A</div><div id="cA" class="value">—</div></div>
+            <div class="stat"><div class="label">Ticker B</div><div id="cB" class="value">—</div></div>
+            <div class="stat"><div class="label">A %</div><div id="cPA" class="value">—</div></div>
+            <div class="stat"><div class="label">B %</div><div id="cPB" class="value">—</div></div>
+            <div class="stat"><div class="label">Common Range</div><div id="cRange" class="value">—</div></div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <div id="chartCompare" class="chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- UPLOAD -->
+      <section id="upload" class="tab">
+        <div class="container">
+          <h2>Upload CSV</h2>
+          <div class="card">
+            <input id="fileInput" type="file" accept=".csv"/>
+            <button id="uploadNow" class="primary">Upload</button>
+            <div id="uploadPreview" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXPORT -->
+      <section id="export" class="tab">
+        <div class="container">
+          <h2>Export</h2>
+          <div class="card">
+            <p>Use the Compare tab to plot data, then click the export buttons to download CSV or PNG.</p>
+            <div class="row small-gap">
+              <button id="downloadCsvMain" class="ghost small">Download CSV</button>
+              <button id="downloadPngMain" class="ghost small">Download PNG</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <div id="toast" class="toast" hidden>Message</div>
-
   <script src="/static/app.js"></script>
 </body>
 </html>
